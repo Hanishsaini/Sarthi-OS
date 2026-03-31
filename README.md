@@ -156,7 +156,7 @@ sarthi-ai-os/
 
 ## 📄 License
 
-MIT © [Your Name]
+MIT © [HANIHS SAINI]
 
 ---
 
