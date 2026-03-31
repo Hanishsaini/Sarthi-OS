@@ -8,32 +8,43 @@ class ContextEngine:
         hour = now.hour
         input_lower = user_input.lower()
 
-        # --- IMPROVED INTENT DETECTION (aligned with main app) ---
-        if any(q in input_lower for q in ["can i", "should i", "is it good", "is it safe"]):
-            intent = "question"
+        # --- INTENT DETECTION (mutually exclusive) ---
+        intent = "general"
 
-        elif any(word in input_lower for word in ["plan", "schedule", "trip", "itinerary", "day"]):
-            intent = "planning"
+        # 1. Navigation
+        if any(word in input_lower for word in ["directions", "how to reach", "navigate", "route to", "driving"]):
+            intent = "navigation"
 
-        elif any(word in input_lower for word in ["weather", "temperature", "rain", "forecast", "hot", "cold"]):
-            intent = "real_time"          # weather is real-time
+        # 2. Real-time (weather, news)
+        elif any(word in input_lower for word in ["weather", "temperature", "rain", "forecast", "hot", "cold", "news", "update"]):
+            intent = "real_time"
 
-        elif any(word in input_lower for word in ["directions", "route", "how to reach", "navigate"]):
-            intent = "real_time"          # navigation also real-time
-
+        # 3. Task execution (book, order, reminder)
         elif any(word in input_lower for word in ["book", "order", "set reminder", "remind me"]):
             intent = "task_execution"
 
-        elif any(word in input_lower for word in ["visit", "go to", "nearby", "place", "tour", "temple", "fort", "palace"]):
-            intent = "planning"           # tourism → planning
+        # 4. Question (yes/no, advice)
+        elif any(q in input_lower for q in ["can i", "should i", "is it good", "is it safe", "what is", "tell me about"]):
+            intent = "question"
 
-        elif any(word in input_lower for word in ["news", "update", "happening"]):
-            intent = "real_time"          # news is real-time
+        # 5. Planning (itinerary, schedule, trip)
+        elif any(word in input_lower for word in ["plan", "schedule", "trip", "itinerary", "day", "how to cover", "visit", "go to", "place", "tour", "temple", "fort", "palace", "attraction"]):
+            intent = "planning"
 
-        else:
-            intent = "general"
+        # 6. Specific place query (single place)
+        if "place" in intent:  # if we had a separate category, but we'll merge into planning
+            pass
 
-        # --- TIME MODE (unchanged) ---
+        # --- TOURIST TYPE DETECTION ---
+        tourist_type = "general"
+        if any(word in input_lower for word in ["wife", "girlfriend", "boyfriend", "partner", "couple", "romantic"]):
+            tourist_type = "couple"
+        elif any(word in input_lower for word in ["kids", "children", "family", "with child"]):
+            tourist_type = "family"
+        elif any(word in input_lower for word in ["alone", "solo", "myself"]):
+            tourist_type = "solo"
+
+        # --- TIME MODE ---
         if 5 <= hour < 12:
             time_mode = "morning"
         elif 12 <= hour < 17:
@@ -49,5 +60,6 @@ class ContextEngine:
             "time_mode": time_mode,
             "intent": intent,
             "hour": hour,
-            "user_type": "tourist"
+            "user_type": "tourist",
+            "tourist_type": tourist_type
         }

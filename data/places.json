@@ -1,0 +1,47 @@
+[
+  {
+    "name": "Patrika Gate",
+    "type": "gate",
+    "best_time": "Evening for photography (4-7 PM)",
+    "timings": "Always open",
+    "crowd": "Moderate in evenings",
+    "notes": "Modern landmark with intricate designs, good for photos. Located near Jawahar Circle.",
+    "nearby": ["Jawahar Circle", "Malviya Nagar"]
+  },
+  {
+    "name": "Govind Devji Temple",
+    "type": "temple",
+    "best_time": "Morning aarti (4:30 AM - 5:30 AM) or evening aarti (7:30 PM - 8:30 PM)",
+    "timings": "4:30 AM – 9:00 PM",
+    "crowd": "Very high during aarti times",
+    "notes": "Krishna temple with royal heritage. Avoid peak hours if you want less crowd.",
+    "nearby": ["City Palace", "Hawa Mahal"]
+  },
+  {
+    "name": "Amer Fort",
+    "type": "fort",
+    "best_time": "Morning (8-11 AM) to avoid heat and crowds",
+    "timings": "8:00 AM – 5:30 PM",
+    "crowd": "High in peak season",
+    "notes": "Elephant rides, light show in evening. Wear comfortable shoes.",
+    "nearby": ["Jaigarh Fort", "Nahargarh Fort", "Panna Meena ka Kund"]
+  },
+  {
+    "name": "City Palace",
+    "type": "palace",
+    "best_time": "Morning (9-11 AM) or late afternoon (3-5 PM)",
+    "timings": "9:30 AM – 5:00 PM",
+    "crowd": "Moderate",
+    "notes": "Royal residence with museum, courtyards. Guided tours available.",
+    "nearby": ["Jantar Mantar", "Hawa Mahal", "Govind Devji Temple"]
+  },
+  {
+    "name": "Hawa Mahal",
+    "type": "palace",
+    "best_time": "Morning (8-10 AM) for best light",
+    "timings": "9:00 AM – 5:00 PM",
+    "crowd": "High",
+    "notes": "Famous 'Palace of Winds'. Best viewed from outside, but you can go inside for a small fee.",
+    "nearby": ["City Palace", "Jantar Mantar", "Johari Bazaar"]
+  }
+]

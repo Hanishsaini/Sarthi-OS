@@ -4,13 +4,16 @@ import json
 class Planner:
     @staticmethod
     def create_plan(user_input: str, context: dict):
-        system_prompt = f"""
-You are Sarthi's Planner Agent.
+        tourist_type = context.get("tourist_type", "general")
+        budget = context.get("budget", "medium")
+        intent = context.get("intent", "general")
+        location = context.get("location", "Jaipur")
 
-Context:
-Location: {context['location']}, {context['state']}
-Time: {context['time_mode']}
-Intent: {context['intent']}
+        system_prompt = f"""You are Sarthi's Planner for Rajasthan tourism.
+Location: {location}
+Tourist Type: {tourist_type}
+Budget: {budget}
+Intent: {intent}
 
 Return ONLY valid JSON:
 {{
@@ -18,55 +21,42 @@ Return ONLY valid JSON:
   "required_tools": []
 }}
 
-Available tools:
-- weather
-- place_info
-- nearby_places
+Available tools: "weather", "place_info", "nearby_places", "search"
 
 Rules:
-- Use tools ONLY if needed
-- For simple questions → no tools
-- For tourism queries → use place_info or nearby_places
-- For weather queries → use weather
-- Keep required_tools minimal
+- Use "weather" only if intent is real_time and weather is mentioned.
+- Use "place_info" if the query asks about a specific place (e.g., "Patrika Gate", "Amer Fort", "Govind Devji Temple").
+- Use "nearby_places" if the query asks for suggestions around a place.
+- Use "search" for general queries not covered by other tools (e.g., "best kachori", "where to eat").
+- Keep required_tools empty for simple questions that can be answered directly.
 """
 
         try:
             response = GroqModel.generate(user_input, system_prompt)
-
             start = response.find('{')
             end = response.rfind('}') + 1
             json_str = response[start:end]
-
             parsed = json.loads(json_str)
-
-            # safety fallback
             if "required_tools" not in parsed:
                 parsed["required_tools"] = []
-
             return parsed
-
         except Exception:
+            # Fallback logic based on keywords
             lower = user_input.lower()
-
-            # --- IMPROVED FALLBACK LOGIC (aligned with intent) ---
-            intent = context.get("intent", "general")
-
-            if intent == "real_time" and "weather" in lower:
-                return {
-                    "steps": ["Check current weather"],
-                    "required_tools": ["weather"]
-                }
-
-            elif intent == "planning" and any(word in lower for word in ["visit", "place", "temple", "fort"]):
-                return {
-                    "steps": ["Get place information"],
-                    "required_tools": ["place_info"]
-                }
-
-            else:
-                # For question or general, no tools
-                return {
-                    "steps": ["Answer directly"],
-                    "required_tools": []
-                }
+            # Detect place names
+            place_keywords = ["amer", "city palace", "hawa mahal", "jal mahal", "patrika gate", "jantar mantar", "nahargarh", "jaigarh", "govind devji temple"]
+            for place in place_keywords:
+                if place in lower:
+                    return {"steps": ["Get place info"], "required_tools": ["place_info"]}
+            # Detect food queries
+            food_keywords = ["food", "eat", "restaurant", "kachori", "lunch", "dinner", "best place to eat", "where to eat", "recommend"]
+            if any(word in lower for word in food_keywords):
+                return {"steps": ["Find recommendations"], "required_tools": ["search"]}
+            # Detect weather
+            if "weather" in lower:
+                return {"steps": ["Check weather"], "required_tools": ["weather"]}
+            # Nearby
+            if "nearby" in lower:
+                return {"steps": ["Find nearby places"], "required_tools": ["nearby_places"]}
+            # Default
+            return {"steps": ["Answer directly"], "required_tools": []}
